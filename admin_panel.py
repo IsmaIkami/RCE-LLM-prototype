@@ -11,6 +11,7 @@ import sys
 import os
 from pathlib import Path
 import time
+from datetime import datetime
 
 # Add RCE-LLM to path
 current_dir = Path(__file__).parent
@@ -128,9 +129,10 @@ with st.sidebar:
 
     # Version tracking
     st.info("**Version Info**")
-    st.text("Commit: 20b6420")
-    st.text("Updated: 2025-11-12")
-    st.text("Status: Production")
+    st.text("Commit: 672f305")
+    st.text("Build: 2025-11-12")
+    st.text(f"Loaded: {datetime.now().strftime('%H:%M:%S')}")
+    st.caption("ML answer fix applied")
 
     st.markdown("---")
     st.header("⚙️ Settings")
