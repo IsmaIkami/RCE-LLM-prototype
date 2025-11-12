@@ -132,8 +132,19 @@ except ImportError as e:
     st.error("Please ensure RCE-LLM is installed: pip install -e .")
     RCE_AVAILABLE = False
 
-# Header
+# Header with version banner
 st.markdown('<div class="main-header">🔍 RCE-LLM Admin Panel</div>', unsafe_allow_html=True)
+
+# GIANT VERSION BANNER
+try:
+    import subprocess
+    git_hash = subprocess.check_output(['git', 'rev-parse', '--short', 'HEAD'],
+                                      cwd=current_dir,
+                                      stderr=subprocess.DEVNULL).decode('ascii').strip()
+    st.warning(f"⚠️ **VERSION CHECK:** Commit {git_hash} | Build v3-FINAL | Loaded {datetime.now().strftime('%H:%M:%S')} | Bytecode: {'OFF' if sys.dont_write_bytecode else 'ON'}")
+except:
+    st.warning(f"⚠️ **VERSION CHECK:** Build v3-FINAL | Loaded {datetime.now().strftime('%H:%M:%S')} | Bytecode: {'OFF' if sys.dont_write_bytecode else 'ON'}")
+
 st.markdown("**Relational Coherence Engine** - Advanced Semantic Processing with Coherence Optimization")
 st.markdown(f"*Based on: DOI 10.5281/zenodo.17360372 | Author: Ismail Sialyen*")
 
@@ -311,7 +322,25 @@ if st.session_state.authenticated:
 
                 # Answer
                 st.subheader("💡 Generated Answer")
+
+                # DEBUG: Check if test mode marker is present
+                if "TEST MODE" in answer.text:
+                    st.success("✅ NEW CODE RUNNING - Test mode active!")
+                else:
+                    st.error("❌ OLD CACHED CODE - Test mode NOT detected! Answer is from cached renderer.")
+
                 st.markdown(f'<div class="success-box"><strong>{answer.text}</strong></div>', unsafe_allow_html=True)
+
+                # Show raw metadata for debugging
+                with st.expander("🔍 Debug: Answer Source"):
+                    st.write("**Answer object type:**", type(answer).__name__)
+                    st.write("**Answer text length:**", len(answer.text))
+                    st.write("**Answer starts with:**", answer.text[:100] if len(answer.text) > 100 else answer.text)
+                    st.write("**Subgraph metadata keys:**", list(answer.subgraph.metadata.keys()))
+                    if "source_text_preview" in answer.subgraph.metadata:
+                        st.write("**Original query in metadata:**", answer.subgraph.metadata["source_text_preview"])
+                    else:
+                        st.error("⚠️ source_text_preview NOT in metadata!")
 
                 # Confidence and caveats
                 if answer.caveats:
