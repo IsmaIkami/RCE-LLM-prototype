@@ -310,6 +310,15 @@ if st.session_state.authenticated:
                         entity_types[entity.semantic_type] = entity_types.get(entity.semantic_type, 0) + 1
                     st.write(f"**Entity Types:** {dict(entity_types)}")
 
+                    # Embedding information
+                    st.write("")
+                    st.write("**Entity Embeddings:**")
+                    embedding_dim = 96  # spaCy en_core_web_sm
+                    st.write(f"• Model: spaCy en_core_web_sm")
+                    st.write(f"• Dimension: {embedding_dim}D")
+                    st.write(f"• Matrix: {num_entities} × {embedding_dim} = {num_entities * embedding_dim} elements")
+                    st.write(f"• Adjacency Matrix: {num_entities} × {num_entities} = {num_entities * num_entities} elements")
+
                 with st.expander("🎯 Stage 2: Context Extraction", expanded=True):
                     st.write(f"**Implementation:** E: X → C (Eq. 7)")
 
@@ -317,6 +326,19 @@ if st.session_state.authenticated:
                     st.write(f"**Intent Detection:** Pattern-based classification")
                     st.write(f"**Domain Detection:** Keyword and entity-type analysis")
                     st.write(f"**Constraints:** Modal and temporal expression extraction")
+
+                with st.expander("🔧 Stage 2.5: Entity Embedding Harmonization", expanded=True):
+                    st.write(f"**Method:** L2 Normalization of Entity Embeddings")
+                    st.write(f"**Purpose:** Standardize entity representations for coherence evaluation")
+                    st.write("")
+                    st.write(f"**Normalization Formula:**")
+                    st.code("v̂ = v / ||v||₂")
+                    st.write("")
+                    embedding_dim = 96
+                    st.write(f"**Entities Harmonized:** {num_entities}")
+                    st.write(f"**Input:** {num_entities} × {embedding_dim} raw embeddings")
+                    st.write(f"**Output:** {num_entities} × {embedding_dim} normalized embeddings")
+                    st.write(f"**Properties:** Unit vectors (||v̂||₂ = 1)")
 
                 with st.expander("📊 Stage 3: Coherence Evaluation", expanded=True):
                     st.write(f"**Implementation:** μ(Ω | C) = Σ w_k·μ_k(Ω | C) (Eq. 8)")

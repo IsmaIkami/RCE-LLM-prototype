@@ -98,12 +98,8 @@ class AnswerRenderer:
             reverse=True
         )[:5]
 
-        # Build answer based on intent
-        if context.intent.value == "query":
-            entity_mentions = ", ".join([e.text for e in top_entities])
-            return f"Based on the analysis, the relevant information includes: {entity_mentions}."
-
-        elif context.intent.value == "calculate":
+        # Build answer based on intent and available information
+        if context.intent.value == "calculate":
             # Find numerical results
             numerical_entities = [e for e in top_entities
                                 if e.semantic_type in ["Quantity", "Number"]]
@@ -111,9 +107,43 @@ class AnswerRenderer:
                 return f"The calculated result is: {numerical_entities[0].text}"
             return "Unable to complete calculation with available information."
 
-        else:
-            # General response
-            return f"Found {len(subgraph.entities)} relevant entities and {len(subgraph.relations)} relations."
+        # For general queries, try to build a coherent answer from relations
+        if subgraph.relations:
+            # Build answer from top relations
+            answer_parts = []
+            seen_info = set()
+
+            for relation in subgraph.relations[:3]:
+                subj_entity = subgraph.get_entity(relation.subject)
+                obj_entity = subgraph.get_entity(relation.object)
+
+                if subj_entity and obj_entity:
+                    # Create natural language from relation
+                    predicate = relation.predicate.replace("_", " ")
+                    statement = f"{subj_entity.text} {predicate} {obj_entity.text}"
+
+                    if statement.lower() not in seen_info:
+                        answer_parts.append(statement)
+                        seen_info.add(statement.lower())
+
+            if answer_parts:
+                # Capitalize first letter and add period
+                formatted_parts = [p[0].upper() + p[1:] + "." for p in answer_parts]
+                return " ".join(formatted_parts)
+
+        # Fallback: use top entities to generate a simple answer
+        if top_entities:
+            # Try to generate a simple definition-style answer
+            main_entity = top_entities[0].text
+            related_entities = [e.text for e in top_entities[1:3]]
+
+            if related_entities:
+                return f"{main_entity} is related to {', '.join(related_entities)}."
+            else:
+                return f"The query relates to {main_entity}."
+
+        # Final fallback
+        return f"Found {len(subgraph.entities)} relevant entities and {len(subgraph.relations)} relations."
 
     def _build_evidence_map(self, subgraph: Graph) -> Dict[str, List[str]]:
         """Build mapping from claims to evidence."""
