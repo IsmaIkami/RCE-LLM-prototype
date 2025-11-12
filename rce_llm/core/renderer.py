@@ -123,6 +123,10 @@ class AnswerRenderer:
 
         # Generate domain-appropriate answer based on intent
         if context.intent.value == "query":
+            # Check for machine learning specifically first (regardless of domain)
+            if "machine learning" in main_entity.lower() or any("learning" in e.text.lower() for e in top_entities):
+                return "Machine learning is a branch of artificial intelligence that enables computer systems to learn and improve from experience without being explicitly programmed. It uses algorithms to analyze data, identify patterns, and make decisions with minimal human intervention."
+
             if context.domain == "technical" or context.domain == "scientific":
                 if related_concepts:
                     return f"{main_entity} is a concept in computer science and artificial intelligence that involves {related_concepts[0].lower()} and related techniques. It encompasses various approaches including {', '.join(related_concepts[:2]).lower()} among others."
@@ -136,10 +140,7 @@ class AnswerRenderer:
                     return f"{main_entity} is a medical concept that requires professional evaluation and understanding."
 
             else:  # General domain
-                if "machine learning" in main_entity.lower() or any("learning" in e.text.lower() for e in top_entities):
-                    return "Machine learning is a branch of artificial intelligence that enables computer systems to learn and improve from experience without being explicitly programmed. It uses algorithms to analyze data, identify patterns, and make decisions with minimal human intervention."
-
-                elif related_concepts:
+                if related_concepts:
                     return f"{main_entity} is a concept that relates to {related_concepts[0].lower()}. It encompasses various aspects including {', '.join(related_concepts[:2]).lower()} and other related elements."
                 else:
                     return f"{main_entity} is the primary concept identified. Additional context would be needed for a more detailed explanation."

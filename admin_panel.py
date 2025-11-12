@@ -125,6 +125,14 @@ with st.sidebar:
             st.rerun()
 
     st.markdown("---")
+
+    # Version tracking
+    st.info("**Version Info**")
+    st.text("Commit: 20b6420")
+    st.text("Updated: 2025-11-12")
+    st.text("Status: Production")
+
+    st.markdown("---")
     st.header("⚙️ Settings")
 
     # Optimization strategy
