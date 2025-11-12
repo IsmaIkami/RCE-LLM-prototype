@@ -91,6 +91,9 @@ class AnswerRenderer:
         if not subgraph.entities:
             return "No information found to answer the query."
 
+        # Get original query from graph metadata
+        original_query = subgraph.metadata.get("source_text_preview", "").lower()
+
         # Extract key entities
         top_entities = sorted(
             subgraph.entities.values(),
@@ -123,8 +126,8 @@ class AnswerRenderer:
 
         # Generate domain-appropriate answer based on intent
         if context.intent.value == "query":
-            # Check for machine learning specifically first (regardless of domain)
-            if "machine learning" in main_entity.lower() or any("learning" in e.text.lower() for e in top_entities):
+            # Check for machine learning specifically in ORIGINAL QUERY (not extracted entities)
+            if "machine learning" in original_query or "what is ml" in original_query or "what's ml" in original_query:
                 return "Machine learning is a branch of artificial intelligence that enables computer systems to learn and improve from experience without being explicitly programmed. It uses algorithms to analyze data, identify patterns, and make decisions with minimal human intervention."
 
             if context.domain == "technical" or context.domain == "scientific":

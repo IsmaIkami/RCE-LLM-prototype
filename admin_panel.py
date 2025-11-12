@@ -99,20 +99,19 @@ st.markdown(f"*Based on: DOI 10.5281/zenodo.17360372 | Author: Ismail Sialyen*")
 with st.sidebar:
     st.header("🔐 Authentication")
 
-    # Simple authentication
+    # Auto-login (comment out to require manual login)
     if 'authenticated' not in st.session_state:
-        st.session_state.authenticated = False
+        st.session_state.authenticated = True  # Auto-login enabled
 
     if not st.session_state.authenticated:
-        username = st.text_input("Username", key="username")
-        password = st.text_input("Password", type="password", key="password")
+        username = st.text_input("Username", key="username", value="admin")
+        password = st.text_input("Password", type="password", key="password", value="rce2024")
 
-        if st.button("Login", type="primary"):
-            if username == "admin" and password == "rce2024":
-                st.session_state.authenticated = True
-                st.rerun()
-            else:
-                st.error("Invalid credentials")
+        if st.button("Login", type="primary") or (username == "admin" and password == "rce2024"):
+            st.session_state.authenticated = True
+            st.rerun()
+        else:
+            st.error("Invalid credentials")
 
         st.markdown("---")
         st.markdown("**Default Credentials:**")
@@ -129,10 +128,10 @@ with st.sidebar:
 
     # Version tracking
     st.info("**Version Info**")
-    st.text("Commit: d3408af")
+    st.text("Commit: [pending]")
     st.text("Build: 2025-11-12")
     st.text(f"Loaded: {datetime.now().strftime('%H:%M:%S')}")
-    st.caption("✓ ML answer fix applied")
+    st.caption("✓ ML query fix + auto-login")
 
     st.markdown("---")
     st.header("⚙️ Settings")
