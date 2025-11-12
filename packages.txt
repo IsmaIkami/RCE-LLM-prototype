@@ -1,3 +1,0 @@
-# System packages for Streamlit Cloud deployment
-# Required for spaCy and other dependencies
-# REBUILD: 2025-11-12-v2
