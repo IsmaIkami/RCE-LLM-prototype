@@ -12,10 +12,16 @@ import os
 from pathlib import Path
 import time
 from datetime import datetime
+import importlib
 
 # Add RCE-LLM to path
 current_dir = Path(__file__).parent
 sys.path.insert(0, str(current_dir))
+
+# Force reload modules to avoid caching issues
+if 'rce_llm' in sys.modules:
+    import rce_llm.core.renderer
+    importlib.reload(rce_llm.core.renderer)
 
 # Page config
 st.set_page_config(
@@ -128,10 +134,24 @@ with st.sidebar:
 
     # Version tracking
     st.info("**Version Info**")
-    st.text("Commit: eda0640")
+    st.text("Commit: [DEBUG]")
     st.text("Build: 2025-11-12")
     st.text(f"Loaded: {datetime.now().strftime('%H:%M:%S')}")
-    st.caption("✓ ML query fix + auto-login")
+
+    # Show renderer source location to verify it's loading the right file
+    if RCE_AVAILABLE:
+        try:
+            import rce_llm.core.renderer as renderer_module
+            st.caption(f"Renderer: {renderer_module.__file__}")
+            # Check if original_query is in the _generate_text method
+            import inspect
+            source = inspect.getsource(renderer_module.AnswerRenderer._generate_text)
+            has_fix = "original_query" in source and "source_text_preview" in source
+            st.caption(f"✓ ML fix: {'APPLIED' if has_fix else 'MISSING'}")
+        except:
+            st.caption("Cannot verify source")
+    else:
+        st.caption("✓ ML query fix + auto-login")
 
     st.markdown("---")
     st.header("⚙️ Settings")

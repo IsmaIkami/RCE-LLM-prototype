@@ -94,12 +94,21 @@ class AnswerRenderer:
         # Get original query from graph metadata
         original_query = subgraph.metadata.get("source_text_preview", "").lower()
 
+        # DEBUG: Print what we're checking
+        print(f"\n[RENDERER DEBUG]")
+        print(f"  Original query: '{original_query}'")
+        print(f"  Context intent: {context.intent.value}")
+        print(f"  Context domain: {context.domain}")
+        print(f"  Metadata keys: {list(subgraph.metadata.keys())}")
+
         # Extract key entities
         top_entities = sorted(
             subgraph.entities.values(),
             key=lambda e: e.confidence,
             reverse=True
         )[:5]
+
+        print(f"  Top entities: {[e.text for e in top_entities]}")
 
         # Build answer based on intent and available information
         if context.intent.value == "calculate":
@@ -127,9 +136,16 @@ class AnswerRenderer:
         # Generate domain-appropriate answer based on intent
         if context.intent.value == "query":
             # Check for machine learning specifically in ORIGINAL QUERY (not extracted entities)
-            if "machine learning" in original_query or "what is ml" in original_query or "what's ml" in original_query:
+            ml_check = "machine learning" in original_query or "what is ml" in original_query or "what's ml" in original_query
+            print(f"  ML check: {ml_check}")
+            print(f"    'machine learning' in query: {'machine learning' in original_query}")
+            print(f"    'what is ml' in query: {'what is ml' in original_query}")
+
+            if ml_check:
+                print(f"  → Returning ML template")
                 return "Machine learning is a branch of artificial intelligence that enables computer systems to learn and improve from experience without being explicitly programmed. It uses algorithms to analyze data, identify patterns, and make decisions with minimal human intervention."
 
+            print(f"  ML check failed, checking domain: {context.domain}")
             if context.domain == "technical" or context.domain == "scientific":
                 if related_concepts:
                     return f"{main_entity} is a concept in computer science and artificial intelligence that involves {related_concepts[0].lower()} and related techniques. It encompasses various approaches including {', '.join(related_concepts[:2]).lower()} among others."
