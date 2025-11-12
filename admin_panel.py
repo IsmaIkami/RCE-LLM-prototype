@@ -142,16 +142,28 @@ with st.sidebar:
     if RCE_AVAILABLE:
         try:
             import rce_llm.core.renderer as renderer_module
-            st.caption(f"Renderer: {renderer_module.__file__}")
-            # Check if original_query is in the _generate_text method
+            import os
+            renderer_file = renderer_module.__file__
+            st.caption(f"File: {renderer_file}")
+
+            # Check file modification time
+            if renderer_file and os.path.exists(renderer_file):
+                mtime = os.path.getmtime(renderer_file)
+                from datetime import datetime
+                mod_time = datetime.fromtimestamp(mtime).strftime('%H:%M:%S')
+                st.caption(f"Modified: {mod_time}")
+
+            # Check if fixes are in the source
             import inspect
             source = inspect.getsource(renderer_module.AnswerRenderer._generate_text)
-            has_fix = "original_query" in source and "source_text_preview" in source
-            st.caption(f"✓ ML fix: {'APPLIED' if has_fix else 'MISSING'}")
-        except:
-            st.caption("Cannot verify source")
+            has_original_query = "original_query" in source and "source_text_preview" in source
+            has_test_mode = "TEST MODE ACTIVE" in source
+            st.caption(f"✓ ML fix: {'APPLIED' if has_original_query else 'MISSING'}")
+            st.caption(f"✓ Test mode: {'ACTIVE' if has_test_mode else 'OFF'}")
+        except Exception as e:
+            st.caption(f"Error: {e}")
     else:
-        st.caption("✓ ML query fix + auto-login")
+        st.caption("RCE not available")
 
     st.markdown("---")
     st.header("⚙️ Settings")

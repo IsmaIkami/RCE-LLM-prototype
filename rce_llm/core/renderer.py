@@ -88,11 +88,19 @@ class AnswerRenderer:
 
     def _generate_text(self, subgraph: Graph, context: Context) -> str:
         """Generate natural language answer text."""
+
+        # FORCE TEST - if this doesn't show, cached code is running!
+        test_mode = True  # Set to False to disable test
+
         if not subgraph.entities:
             return "No information found to answer the query."
 
         # Get original query from graph metadata
         original_query = subgraph.metadata.get("source_text_preview", "").lower()
+
+        # TEST: Always return ML answer to verify code is running
+        if test_mode and "machine learning" in original_query:
+            return "[TEST MODE ACTIVE - Code Updated!] Machine learning is a branch of artificial intelligence that enables computer systems to learn and improve from experience without being explicitly programmed. It uses algorithms to analyze data, identify patterns, and make decisions with minimal human intervention."
 
         # DEBUG: Print what we're checking
         print(f"\n[RENDERER DEBUG]")
