@@ -18,10 +18,28 @@ import importlib
 current_dir = Path(__file__).parent
 sys.path.insert(0, str(current_dir))
 
+# NUCLEAR OPTION: Clear ALL Python cache
+import shutil
+for root, dirs, files in os.walk(current_dir):
+    if '__pycache__' in dirs:
+        pycache_path = os.path.join(root, '__pycache__')
+        try:
+            shutil.rmtree(pycache_path)
+        except:
+            pass
+
 # Force reload modules to avoid caching issues
 if 'rce_llm' in sys.modules:
+    # Remove from sys.modules to force reimport
+    modules_to_reload = [m for m in sys.modules if m.startswith('rce_llm')]
+    for module in modules_to_reload:
+        del sys.modules[module]
+
+# Now import fresh
+try:
     import rce_llm.core.renderer
-    importlib.reload(rce_llm.core.renderer)
+except:
+    pass
 
 # Page config
 st.set_page_config(

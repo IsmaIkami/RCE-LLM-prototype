@@ -1,5 +1,6 @@
 # RCE-LLM Streamlit Cloud Requirements
 # Author: Ismail Sialyen
+# REBUILD TRIGGER: 2025-11-12-v2 (forces cache clear)
 
 # Core dependencies
 spacy==3.7.2
@@ -12,6 +13,7 @@ streamlit==1.31.0
 
 # Optional
 plotly==5.18.0
+six==1.16.0
 
 # spaCy model - must be after spacy
 https://github.com/explosion/spacy-models/releases/download/en_core_web_sm-3.7.1/en_core_web_sm-3.7.1-py3-none-any.whl
