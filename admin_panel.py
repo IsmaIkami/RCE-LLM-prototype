@@ -119,36 +119,11 @@ st.markdown('<div class="main-header">🔍 RCE-LLM Admin Panel</div>', unsafe_al
 st.markdown("**Relational Coherence Engine** - Advanced Semantic Processing with Coherence Optimization")
 st.markdown(f"*Based on: DOI 10.5281/zenodo.17360372 | Author: Ismail Sialyen*")
 
-# Sidebar for authentication and settings
+# Sidebar for settings
 with st.sidebar:
-    st.header("🔐 Authentication")
-
-    # Auto-login (comment out to require manual login)
+    # Authentication disabled - direct access
     if 'authenticated' not in st.session_state:
-        st.session_state.authenticated = True  # Auto-login enabled
-
-    if not st.session_state.authenticated:
-        username = st.text_input("Username", key="username", value="admin")
-        password = st.text_input("Password", type="password", key="password", value="rce2024")
-
-        if st.button("Login", type="primary") or (username == "admin" and password == "rce2024"):
-            st.session_state.authenticated = True
-            st.rerun()
-        else:
-            st.error("Invalid credentials")
-
-        st.markdown("---")
-        st.markdown("**Default Credentials:**")
-        st.code("Username: admin\nPassword: rce2024")
-        st.stop()
-
-    else:
-        st.success("✅ Authenticated as admin")
-        if st.button("Logout"):
-            st.session_state.authenticated = False
-            st.rerun()
-
-    st.markdown("---")
+        st.session_state.authenticated = True
 
     # Version tracking
     st.info("**Version Info**")
