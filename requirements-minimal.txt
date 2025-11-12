@@ -1,0 +1,6 @@
+streamlit
+spacy
+python-dateutil
+networkx
+numpy
+plotly
