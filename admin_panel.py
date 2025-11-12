@@ -18,8 +18,11 @@ import importlib
 current_dir = Path(__file__).parent
 sys.path.insert(0, str(current_dir))
 
-# NUCLEAR OPTION: Clear ALL Python cache
+# NUCLEAR OPTION: Clear ALL Python cache and force reimport
 import shutil
+import glob
+
+# Delete all __pycache__ directories
 for root, dirs, files in os.walk(current_dir):
     if '__pycache__' in dirs:
         pycache_path = os.path.join(root, '__pycache__')
@@ -28,18 +31,33 @@ for root, dirs, files in os.walk(current_dir):
         except:
             pass
 
-# Force reload modules to avoid caching issues
-if 'rce_llm' in sys.modules:
-    # Remove from sys.modules to force reimport
-    modules_to_reload = [m for m in sys.modules if m.startswith('rce_llm')]
-    for module in modules_to_reload:
-        del sys.modules[module]
+# Delete all .pyc files
+for pyc_file in glob.glob(str(current_dir / '**/*.pyc'), recursive=True):
+    try:
+        os.remove(pyc_file)
+    except:
+        pass
 
-# Now import fresh
-try:
-    import rce_llm.core.renderer
-except:
-    pass
+# Clear sys.modules of ALL rce_llm imports
+if 'rce_llm' in sys.modules:
+    modules_to_remove = [m for m in list(sys.modules.keys()) if m.startswith('rce_llm')]
+    for module in modules_to_remove:
+        try:
+            del sys.modules[module]
+        except:
+            pass
+
+# Disable Python bytecode generation
+sys.dont_write_bytecode = True
+
+# Print startup info for debugging
+print("=" * 80)
+print("RCE-LLM ADMIN PANEL STARTING")
+print(f"Time: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
+print(f"Python: {sys.version}")
+print(f"Working dir: {current_dir}")
+print(f"Bytecode disabled: {sys.dont_write_bytecode}")
+print("=" * 80)
 
 # Page config
 st.set_page_config(
@@ -127,9 +145,20 @@ with st.sidebar:
 
     # Version tracking
     st.info("**Version Info**")
-    st.text("Commit: [DEBUG]")
-    st.text("Build: 2025-11-12")
+
+    # Try to get actual git commit
+    try:
+        import subprocess
+        git_hash = subprocess.check_output(['git', 'rev-parse', '--short', 'HEAD'],
+                                          cwd=current_dir,
+                                          stderr=subprocess.DEVNULL).decode('ascii').strip()
+        st.text(f"Commit: {git_hash}")
+    except:
+        st.text("Commit: [unable to read]")
+
+    st.text("Build: 2025-11-12-v3")
     st.text(f"Loaded: {datetime.now().strftime('%H:%M:%S')}")
+    st.text(f"Bytecode: {'disabled' if sys.dont_write_bytecode else 'enabled'}")
 
     # Show renderer source location to verify it's loading the right file
     if RCE_AVAILABLE:

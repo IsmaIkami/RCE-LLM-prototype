@@ -1,6 +1,6 @@
 # RCE-LLM Streamlit Cloud Requirements
 # Author: Ismail Sialyen
-# REBUILD TRIGGER: 2025-11-12-v2 (forces cache clear)
+# REBUILD TRIGGER: 2025-11-12-v3-FINAL (forces cache clear)
 
 # Core dependencies
 spacy==3.7.2
