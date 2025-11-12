@@ -129,7 +129,7 @@ with st.sidebar:
 
     # Version tracking
     st.info("**Version Info**")
-    st.text("Commit: b05f939")
+    st.text("Commit: d3408af")
     st.text("Build: 2025-11-12")
     st.text(f"Loaded: {datetime.now().strftime('%H:%M:%S')}")
     st.caption("✓ ML answer fix applied")
