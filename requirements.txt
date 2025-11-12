@@ -1,22 +1,17 @@
-# RCE-LLM Production Requirements - Streamlit Cloud Compatible
+# RCE-LLM Streamlit Cloud Requirements
 # Author: Ismail Sialyen
-# Paper: DOI 10.5281/zenodo.17360372
 
-# Core NLP
-spacy>=3.7.0,<3.8.0
-https://github.com/explosion/spacy-models/releases/download/en_core_web_sm-3.7.0/en_core_web_sm-3.7.0-py3-none-any.whl
+# Core dependencies
+spacy==3.7.2
+python-dateutil==2.8.2
+networkx==3.2.1
+numpy==1.26.4
 
-# Date/time parsing
-python-dateutil>=2.8.2
+# Streamlit
+streamlit==1.31.0
 
-# Data structures
-networkx>=3.1
+# Optional
+plotly==5.18.0
 
-# Scientific computing
-numpy>=1.24.0,<2.0.0
-
-# Streamlit (for admin panel)
-streamlit>=1.28.0
-
-# Optional visualizations
-plotly>=5.17.0
+# spaCy model - must be after spacy
+https://github.com/explosion/spacy-models/releases/download/en_core_web_sm-3.7.1/en_core_web_sm-3.7.1-py3-none-any.whl
