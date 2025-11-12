@@ -18,46 +18,8 @@ import importlib
 current_dir = Path(__file__).parent
 sys.path.insert(0, str(current_dir))
 
-# NUCLEAR OPTION: Clear ALL Python cache and force reimport
-import shutil
-import glob
-
-# Delete all __pycache__ directories
-for root, dirs, files in os.walk(current_dir):
-    if '__pycache__' in dirs:
-        pycache_path = os.path.join(root, '__pycache__')
-        try:
-            shutil.rmtree(pycache_path)
-        except:
-            pass
-
-# Delete all .pyc files
-for pyc_file in glob.glob(str(current_dir / '**/*.pyc'), recursive=True):
-    try:
-        os.remove(pyc_file)
-    except:
-        pass
-
-# Clear sys.modules of ALL rce_llm imports
-if 'rce_llm' in sys.modules:
-    modules_to_remove = [m for m in list(sys.modules.keys()) if m.startswith('rce_llm')]
-    for module in modules_to_remove:
-        try:
-            del sys.modules[module]
-        except:
-            pass
-
-# Disable Python bytecode generation
+# Simplified startup - no aggressive cache clearing to avoid crashes
 sys.dont_write_bytecode = True
-
-# Print startup info for debugging
-print("=" * 80)
-print("RCE-LLM ADMIN PANEL STARTING")
-print(f"Time: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
-print(f"Python: {sys.version}")
-print(f"Working dir: {current_dir}")
-print(f"Bytecode disabled: {sys.dont_write_bytecode}")
-print("=" * 80)
 
 # Page config
 st.set_page_config(
@@ -135,15 +97,8 @@ except ImportError as e:
 # Header with version banner
 st.markdown('<div class="main-header">🔍 RCE-LLM Admin Panel</div>', unsafe_allow_html=True)
 
-# GIANT VERSION BANNER
-try:
-    import subprocess
-    git_hash = subprocess.check_output(['git', 'rev-parse', '--short', 'HEAD'],
-                                      cwd=current_dir,
-                                      stderr=subprocess.DEVNULL).decode('ascii').strip()
-    st.warning(f"⚠️ **VERSION CHECK:** Commit {git_hash} | Build v3-FINAL | Loaded {datetime.now().strftime('%H:%M:%S')} | Bytecode: {'OFF' if sys.dont_write_bytecode else 'ON'}")
-except:
-    st.warning(f"⚠️ **VERSION CHECK:** Build v3-FINAL | Loaded {datetime.now().strftime('%H:%M:%S')} | Bytecode: {'OFF' if sys.dont_write_bytecode else 'ON'}")
+# VERSION BANNER
+st.info(f"🚀 RCE-LLM Prototype | Build v3-FINAL | {datetime.now().strftime('%H:%M:%S')}")
 
 st.markdown("**Relational Coherence Engine** - Advanced Semantic Processing with Coherence Optimization")
 st.markdown(f"*Based on: DOI 10.5281/zenodo.17360372 | Author: Ismail Sialyen*")
@@ -156,20 +111,8 @@ with st.sidebar:
 
     # Version tracking
     st.info("**Version Info**")
-
-    # Try to get actual git commit
-    try:
-        import subprocess
-        git_hash = subprocess.check_output(['git', 'rev-parse', '--short', 'HEAD'],
-                                          cwd=current_dir,
-                                          stderr=subprocess.DEVNULL).decode('ascii').strip()
-        st.text(f"Commit: {git_hash}")
-    except:
-        st.text("Commit: [unable to read]")
-
-    st.text("Build: 2025-11-12-v3")
-    st.text(f"Loaded: {datetime.now().strftime('%H:%M:%S')}")
-    st.text(f"Bytecode: {'disabled' if sys.dont_write_bytecode else 'enabled'}")
+    st.text("Build: v3-FINAL")
+    st.text(f"Time: {datetime.now().strftime('%H:%M:%S')}")
 
     # Show renderer source location to verify it's loading the right file
     if RCE_AVAILABLE:
