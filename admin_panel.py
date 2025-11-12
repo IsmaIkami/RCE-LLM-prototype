@@ -128,7 +128,7 @@ with st.sidebar:
 
     # Version tracking
     st.info("**Version Info**")
-    st.text("Commit: [pending]")
+    st.text("Commit: eda0640")
     st.text("Build: 2025-11-12")
     st.text(f"Loaded: {datetime.now().strftime('%H:%M:%S')}")
     st.caption("✓ ML query fix + auto-login")
